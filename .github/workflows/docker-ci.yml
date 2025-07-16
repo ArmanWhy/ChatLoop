@@ -1,0 +1,47 @@
+name: Node.js CI + Docker Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: ⬇️ Checkout repo
+      uses: actions/checkout@v3
+
+    - name: 🧭 Show workspace contents (for debugging)
+      run: ls -la
+
+    - name: ⚙️ Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: 📦 Install dependencies
+      run: npm install
+
+    - name: 🐳 Build Docker image
+      run: docker build -t chatloop .
+
+    - name: 🚀 Run Docker container
+      run: docker run -d --env-file .env --name chatloop-test -p 5000:5000 chatloop
+
+    - name: 🧪 Wait & test if app is up
+      run: |
+        echo "⏳ Waiting for app to be ready..."
+        for i in {1..10}; do
+          if curl --silent http://localhost:5000 > /dev/null; then
+            echo "✅ Server is up!"
+            exit 0
+          fi
+          sleep 3
+        done
+        echo "❌ Server did not start in time."
+        docker logs chatloop-test
+        exit 1

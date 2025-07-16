@@ -1,0 +1,26 @@
+# Node.js
+node_modules/
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+coverage/
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+*.local
+docker-compose.override.yml
+
+# Optional: ignore VSCode or IDE settings
+.vscode/
+.idea/
+
+# Optional: ignore test/report folders
+test-output/
+reports/
